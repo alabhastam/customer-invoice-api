@@ -12,8 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('customers', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->id();  // Auto-incrementing primary key
+            $table->string('name');  // Customer's name
+            $table->string('email')->unique();  // Customer's email
+            $table->string('phone_number')->nullable();  // Optional phone number
+            $table->timestamps();  // Created at and updated at timestamps
         });
     }
 

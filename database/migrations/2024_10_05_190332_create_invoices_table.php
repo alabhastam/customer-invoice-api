@@ -12,8 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('invoices', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->id();  // Auto-incrementing primary key
+            $table->unsignedBigInteger('customer_id');  // Foreign key to customers table
+            $table->decimal('amount', 10, 2);  // Invoice amount (e.g., 99999999.99)
+            $table->date('invoice_date');  // Date of the invoice
+            $table->timestamps();  // Created at and updated at timestamps
         });
     }
 
