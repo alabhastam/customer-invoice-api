@@ -3,47 +3,71 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Invoice;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Display a listing of invoices
     public function index()
     {
-        //
+        return response()->json(Invoice::all(), 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Store a new invoice
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'customer_id' => 'required|exists:customers,id',
+            'amount' => 'required|numeric',
+            'invoice_date' => 'required|date',
+        ]);
+
+        $invoice = Invoice::create($validated);
+        return response()->json($invoice, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // Display a specific invoice
+    public function show($id)
     {
-        //
+        $invoice = Invoice::find($id);
+
+        if ($invoice) {
+            return response()->json($invoice, 200);
+        } else {
+            return response()->json(['message' => 'Invoice not found'], 404);
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    // Update an existing invoice
+    public function update(Request $request, $id)
     {
-        //
+        $invoice = Invoice::find($id);
+
+        if ($invoice) {
+            $validated = $request->validate([
+                'customer_id' => 'required|exists:customers,id',
+                'amount' => 'required|numeric',
+                'invoice_date' => 'required|date',
+            ]);
+
+            $invoice->update($validated);
+            return response()->json($invoice, 200);
+        } else {
+            return response()->json(['message' => 'Invoice not found'], 404);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    // Delete an invoice
+    public function destroy($id)
     {
-        //
+        $invoice = Invoice::find($id);
+
+        if ($invoice) {
+            $invoice->delete();
+            return response()->json(['message' => 'Invoice deleted successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Invoice not found'], 404);
+        }
     }
 }
